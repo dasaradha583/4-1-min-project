@@ -1,0 +1,15 @@
+/Augmented Dataset
+
+
+*.png
+*.csv
+last_model.pth
+*.json
+*.pth
+*.pt
+/Original Dataset
+/Split Dataset
+/saved_models
+.DS_Store
+src/__pycache__
+/venv
