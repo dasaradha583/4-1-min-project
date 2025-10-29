@@ -74,6 +74,19 @@ DISEASE_INFO = {
             "Avoid wheat after rice to reduce spore carryover.",
         ],
     },
+    "Unknown": {
+        "description": (
+            "This image does not appear to be a recognizable wheat disease. "
+            "The model has low confidence in its prediction. Please ensure you upload "
+            "a clear, well-lit image of wheat leaves, stems, or kernels showing disease symptoms."
+        ),
+        "treatment": [
+            "Verify the image shows wheat plant parts (not other crops or objects).",
+            "Ensure good lighting and focus quality.",
+            "Capture close-up images of affected areas.",
+            "Try uploading a different image if available.",
+        ],
+    },
 }
 # --------------------------------------------------------------------
 
@@ -111,8 +124,17 @@ if uploaded_file is not None:
                 result = response.json()
                 label = result["prediction"]
                 confidence = result["confidence"]
+                message = result.get("message", "")
 
-                st.success(f"✅ Predicted: **{label}** ({confidence}% confidence)")
+                # Display prediction with appropriate styling
+                if label == "Unknown":
+                    st.warning(f"⚠️ **Prediction:** {label}")
+                    st.warning(f"**Confidence:** {confidence}%")
+                    if message:
+                        st.info(message)
+                else:
+                    st.success(f"✅ **Predicted:** {label}")
+                    st.success(f"**Confidence:** {confidence}%")
 
                 if label in DISEASE_INFO:
                     info = DISEASE_INFO[label]

@@ -66,11 +66,23 @@ async def predict(file: UploadFile = File(...)):
             probs = torch.nn.functional.softmax(out, dim=1)
             pred_idx = int(probs.argmax(dim=1).item())
             confidence = float(probs.max().item())
-        result = {
-            "filename": file.filename,
-            "prediction": CLASS_NAMES[pred_idx],
-            "confidence": round(confidence * 100, 2),
-        }
+        
+        # Confidence threshold for out-of-distribution detection
+        CONFIDENCE_THRESHOLD = 0.65  # 65% threshold
+        
+        if confidence < CONFIDENCE_THRESHOLD:
+            result = {
+                "filename": file.filename,
+                "prediction": "Unknown",
+                "confidence": round(confidence * 100, 2),
+                "message": "Low confidence - image may not be wheat disease. Please upload a clear wheat image."
+            }
+        else:
+            result = {
+                "filename": file.filename,
+                "prediction": CLASS_NAMES[pred_idx],
+                "confidence": round(confidence * 100, 2),
+            }
         return JSONResponse(result)
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
