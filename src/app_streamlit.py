@@ -100,6 +100,16 @@ uploaded_file = st.file_uploader("Choose a leaf image...", type=["jpg", "jpeg", 
 if uploaded_file is not None:
     img = Image.open(uploaded_file)
 
+    # Convert RGBA to RGB if necessary
+    if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+        # Create a new RGB image with white background
+        background = Image.new('RGB', img.size, (255, 255, 255))
+        if img.mode == 'P':
+            img = img.convert('RGBA')
+        # Composite the image onto the background
+        background.paste(img, mask=img.split()[-1])
+        img = background
+
     # Resize display size
     display_width = 300
     aspect_ratio = img.height / img.width
@@ -108,6 +118,8 @@ if uploaded_file is not None:
     st.image(img_resized, caption="Uploaded Image", use_container_width=False)
 
     buf = io.BytesIO()
+    # Ensure image is in RGB mode before saving as JPEG
+    img = img.convert('RGB')
     img.save(buf, format="JPEG")
     buf.seek(0)
 
@@ -136,15 +148,27 @@ if uploaded_file is not None:
                     st.success(f"✅ **Predicted:** {label}")
                     st.success(f"**Confidence:** {confidence}%")
 
-                if label in DISEASE_INFO:
-                    info = DISEASE_INFO[label]
-                    st.markdown("### 🧬 About the disease")
-                    st.info(info["description"])
+                    if label in DISEASE_INFO:
+                        info = DISEASE_INFO[label]
+                        st.markdown("### 🧬 About the disease")
+                        st.info(info["description"])
 
-                    st.markdown("### 🌿 Suggested Actions")
-                    for step in info["treatment"]:
-                        st.write(f"- {step}")
-                else:
-                    st.warning("No additional information found for this disease label.")
+                        st.markdown("### 🌿 Suggested Actions")
+                        for step in info["treatment"]:
+                            st.write(f"- {step}")
+                    else:
+                        st.warning("No additional information found for this disease label.")
             else:
-                st.error("Server error: " + response.text)
+                try:
+                    result = response.json()
+                    st.error("⚠️ Invalid Image")
+                    st.error(result.get("error", "Error processing image"))
+                    if "details" in result:
+                        if isinstance(result["details"], list):
+                            st.warning("Requirements:")
+                            for detail in result["details"]:
+                                st.warning(detail)
+                        else:
+                            st.warning(result["details"])
+                except:
+                    st.error("Server error: " + response.text)

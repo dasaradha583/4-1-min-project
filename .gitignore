@@ -1,14 +1,19 @@
-/Augmented Dataset
+
+# Python virtual environment
+/.venv
+__pycache__/
+*.py[cod]
+
+# Training artifacts
+/Split Dataset/
+!/experiments/
+!/experiments/
 
 
-*.png
-*.csv
-last_model.pth
-*.json
-*.pt
-/Original Dataset
-/Split Dataset
-/saved_models
+# IDE
+.vscode/
+.idea/
+
+# OS files
 .DS_Store
-src/__pycache__
-/venv
+Thumbs.db

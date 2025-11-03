@@ -22,10 +22,17 @@ import matplotlib.pyplot as plt
 # Small utilities & transforms
 # -----------------------
 def pil_load_rgb(path):
-    img = Image.open(path)
-    if img.mode != "RGB":
-        img = img.convert("RGB")
-    return img
+    try:
+        img = Image.open(path)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        # Verify image can be loaded
+        img.load()
+        return img
+    except Exception as e:
+        print(f"Error loading image {path}: {e}")
+        # Return a black image as fallback
+        return Image.new('RGB', (224, 224), (0, 0, 0))
 
 class Resize:
     def __init__(self, size):
@@ -268,8 +275,11 @@ def export_torchscript(model, example_input, outpath):
 # Main
 # -----------------------
 def main(args):
+    # Set number of threads for better CPU performance
+    torch.set_num_threads(4)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
+    print(f"Torch threads: {torch.get_num_threads()}")
 
     # transforms
     train_transform = lambda img: ToTensorNormalize()(ColorJitterSimple(0.2,0.2,0.2)(

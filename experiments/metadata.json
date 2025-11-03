@@ -1,0 +1,16 @@
+{
+  "classes": [
+    "BlackPoint",
+    "FusariumFootRot",
+    "HealthyLeaf",
+    "LeafBlight",
+    "WheatBlast"
+  ],
+  "input_size": [
+    3,
+    224,
+    224
+  ],
+  "best_val_acc": 0.995,
+  "epochs": 25
+}

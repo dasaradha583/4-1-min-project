@@ -1,0 +1,17 @@
+{
+  "overall_accuracy": 99.0,
+  "per_class_accuracy": {
+    "BlackPoint": 97.0,
+    "FusariumFootRot": 100.0,
+    "HealthyLeaf": 100.0,
+    "LeafBlight": 98.0,
+    "WheatBlast": 100.0
+  },
+  "per_class_confidence": {
+    "BlackPoint": 97.01487857103348,
+    "FusariumFootRot": 98.4519413113594,
+    "HealthyLeaf": 97.61334472894669,
+    "LeafBlight": 98.94137632846832,
+    "WheatBlast": 99.9959374666214
+  }
+}
