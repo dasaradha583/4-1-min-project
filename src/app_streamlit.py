@@ -9,7 +9,7 @@ import requests
 from PIL import Image
 import io
 
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "http://127.0.0.1:8003/predict"
 
 # --------------------------------------------------------------------
 # Disease information database (editable, extendable)
